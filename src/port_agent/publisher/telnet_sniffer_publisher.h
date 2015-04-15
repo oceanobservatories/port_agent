@@ -36,8 +36,8 @@ namespace publisher {
 		   void setSuffix(const string &param) { m_suffix = param; }
 	   
         protected:
-            virtual bool handleInstrumentData(Packet *packet)     { publishDataFromInstrument(packet); }
-            virtual bool handleDriverData(Packet *packet)         { publishDataFromObservatory(packet); }
+            virtual bool handleInstrumentData(Packet *packet)     { return publishDataFromInstrument(packet); }
+            virtual bool handleDriverData(Packet *packet)         { return publishDataFromObservatory(packet); }
             virtual bool handleInstrumentCommand(Packet *packet)  { return true; }
             virtual bool handleCommand(Packet *packet)            { return true; }
             virtual bool handleStatus(Packet *packet)             { return true; }
