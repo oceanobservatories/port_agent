@@ -890,7 +890,7 @@ void PortAgent::handlePortAgentCommand(const char * commands) {
         return;
     
     // Clear the command buffer
-    while(cmd = m_pConfig->getCommand()) {
+    while((cmd = m_pConfig->getCommand())) {
     }
     
     m_pConfig->parse(commands);
@@ -913,7 +913,7 @@ void PortAgent::processPortAgentCommands() {
     PortAgentCommand cmd;
     ostringstream msg;
 
-    while(cmd = m_pConfig->getCommand()) {
+    while((cmd = m_pConfig->getCommand())) {
         switch (cmd) {
             case CMD_COMM_CONFIG_UPDATE:
                 LOG(DEBUG) << "communication config update command";
@@ -931,7 +931,7 @@ void PortAgent::processPortAgentCommands() {
                 break;
             case CMD_GET_CONFIG:
                 LOG(DEBUG) << "get config command";
-                publishFault("not implemented");
+                publishConfig(m_pConfig->getConfig());
                 break;
             case CMD_GET_STATE:
                 LOG(DEBUG) << "get state command";
@@ -954,6 +954,8 @@ void PortAgent::processPortAgentCommands() {
             case CMD_SHUTDOWN:
                 LOG(DEBUG) << "shutdown command";
                 shutdown();
+                break;
+            default:
                 break;
         };
     }
@@ -1624,11 +1626,8 @@ void PortAgent::publishHeartbeat() {
  * Description: Generate a fault packet and send it to the publishers.
  ******************************************************************************/
 void PortAgent::publishFault(const string &msg) {
-    Timestamp ts;
-    Packet packet(PORT_AGENT_FAULT, ts, (char *)(msg.c_str()), msg.length());
-
+    publishPacket(msg.c_str(), msg.length(), PORT_AGENT_FAULT);
     LOG(ERROR) << "Port Agent Fault: " << msg;
-    publishPacket(&packet);
 }
 
 /******************************************************************************
@@ -1636,11 +1635,17 @@ void PortAgent::publishFault(const string &msg) {
  * Description: Generate a status packet and send it to the publishers.
  ******************************************************************************/
 void PortAgent::publishStatus(const string &msg) {
-    Timestamp ts;
-    Packet packet(PORT_AGENT_STATUS, ts, (char *)(msg.c_str()), msg.length());
-
+    publishPacket(msg.c_str(), msg.length(), PORT_AGENT_STATUS);
     LOG(ERROR) << "Port Agent Status: " << msg;
-    publishPacket(&packet);
+}
+
+/******************************************************************************
+ * Method: publishConfig
+ * Description: Generate a configuration packet and send it to the publishers.
+ ******************************************************************************/
+void PortAgent::publishConfig(const string &msg) {
+    publishPacket(msg.c_str(), msg.length(), PORT_AGENT_CONFIG);
+    LOG(ERROR) << "Port Agent Config: " << msg;
 }
 
 /******************************************************************************
@@ -1675,7 +1680,7 @@ void PortAgent::publishTimestamp(uint32_t val) {
     Timestamp ts;
 
     // 0, 1, 2 are the only acceptable values for the timestamp
-    if(val < 0 || val > 2) {
+    if(val > 2) {
     	LOG(ERROR) << "Attempt to send Invalid Timestamp Command!";
     }
 
@@ -1708,7 +1713,7 @@ void PortAgent::publishPacket(Packet *packet) {
  * Method: publishPacket
  * Description: Create a packet and publish it.
  ******************************************************************************/
-void PortAgent::publishPacket(char *payload, uint16_t size, PacketType type) {
+void PortAgent::publishPacket(char const *payload, uint16_t size, PacketType type) {
     Timestamp ts;
     Packet packet(type, ts, payload, size);
     publishPacket(&packet); 

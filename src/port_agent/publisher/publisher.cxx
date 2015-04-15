@@ -131,6 +131,9 @@ bool Publisher::publish(Packet *packet) {
 		case PORT_AGENT_HEARTBEAT:
             return handleHeartbeat(packet);
 
+		case PORT_AGENT_CONFIG:
+			return handleStatus(packet);
+
 		default:
 			throw UnknownPacketType();
 		};

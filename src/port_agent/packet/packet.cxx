@@ -88,7 +88,7 @@ Packet::Packet() {
  *
  ******************************************************************************/
 Packet::Packet(PacketType packetType, Timestamp timestamp,
-               char *payload, uint16_t payloadSize) {
+               char const *payload, uint16_t payloadSize) {
     
     LOG(DEBUG) << "Building a new packet";
 
@@ -371,6 +371,7 @@ string Packet::typeToString(PacketType type) {
         case PORT_AGENT_FAULT: return string("PORT_AGENT_FAULT");
         case INSTRUMENT_COMMAND: return string("INSTRUMENT_COMMAND");
         case PORT_AGENT_HEARTBEAT: return string("PORT_AGENT_HEARTBEAT");
+        case PORT_AGENT_CONFIG: return string("PORT_AGENT_CONFIG");
     };
 
     return "OUT_OF_RANGE";
