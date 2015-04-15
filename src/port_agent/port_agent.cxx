@@ -931,7 +931,7 @@ void PortAgent::processPortAgentCommands() {
                 break;
             case CMD_GET_CONFIG:
                 LOG(DEBUG) << "get config command";
-                publishFault("not implemented");
+                publishConfig(m_pConfig->getConfig());
                 break;
             case CMD_GET_STATE:
                 LOG(DEBUG) << "get state command";
@@ -1640,6 +1640,18 @@ void PortAgent::publishStatus(const string &msg) {
     Packet packet(PORT_AGENT_STATUS, ts, (char *)(msg.c_str()), msg.length());
 
     LOG(ERROR) << "Port Agent Status: " << msg;
+    publishPacket(&packet);
+}
+
+/******************************************************************************
+ * Method: publishConfig
+ * Description: Generate a configuration packet and send it to the publishers.
+ ******************************************************************************/
+void PortAgent::publishConfig(const string &msg) {
+    Timestamp ts;
+    Packet packet(PORT_AGENT_CONFIG, ts, (char *)(msg.c_str()), msg.length());
+
+    LOG(ERROR) << "Port Agent Config: " << msg;
     publishPacket(&packet);
 }
 
