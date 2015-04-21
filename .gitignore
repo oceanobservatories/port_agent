@@ -1,5 +1,8 @@
+.idea
+CMakeLists.txt
 autom4te.cache/
 MakeFile
+Makefile
 config.log
 config.status
 .deps/

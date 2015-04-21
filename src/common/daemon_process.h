@@ -32,9 +32,8 @@ using namespace std;
 
 class DaemonProcess {
     public:
-        DaemonProcess() : server_pid(0) {}
-        unsigned int pid();
-        
+        DaemonProcess() {}
+
         bool start();
         int launch_process();
         int kill_process();
@@ -75,8 +74,6 @@ class DaemonProcess {
         
     private:
         int read_pidfile();
-        
-        unsigned server_pid;
         static unsigned int trapped_signal;
         
 };

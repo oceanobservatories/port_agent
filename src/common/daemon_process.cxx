@@ -52,11 +52,6 @@ void DaemonProcess::signal_callback_handler(int signum) {
     LOG(DEBUG) << "SIGNAL TRAP: " << signum;
     DaemonProcess::trapped_signal = signum;
 }
-
-// Accessors
-unsigned int DaemonProcess::pid() {
-    return server_pid;
-}
         
 bool DaemonProcess::start() {
     duplicate_check();
@@ -83,7 +78,7 @@ bool DaemonProcess::daemonize() {
        we can exit the parent process. */
     if (pid > 0) {
         exit(EXIT_SUCCESS);
-    }server_pid ? server_pid : 
+    }
 
     /* Change the file mode mask */
     umask(0);
@@ -199,10 +194,8 @@ int DaemonProcess::launch_process() {
     
     LOG(INFO) << "Launching daemon process.  My pid: " << pid;
     LOG(DEBUG) << "Launch command: " << cmd << " res: " << result;
-    
-    server_pid = pid;
-    
-    return server_pid;
+
+    return pid;
 }
 
 int DaemonProcess::kill_process() {
@@ -214,9 +207,7 @@ int DaemonProcess::kill_process() {
         LOG(INFO) << "Killing process.  pid: " << pid;
         result = kill(pid, SIGTERM);
         sleep(1);
-        
-        server_pid = NULL;
-        
+
         if(! is_running())
             remove_pidfile();
         
